@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Scene Analyzer - Real-time Scene Understanding</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="background-gradient"></div>
+    <div class="floating-orbs"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <span class="logo-icon">🧠</span>
+                <div>
+                    <h1> Scene Analyzer</h1>
+                    <p class="subtitle">Real-time Scene Understanding System</p>
+                </div>
+            </div>
+            <div class="header-status">
+                <div id="modelStatus" class="model-status">
+                    <span class="status-indicator"></span>
+                    <span class="status-text">Loading...</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="dashboard">
+        <!-- Left Panel: Upload & Preview -->
+        <section class="left-panel">
+            <div class="upload-container">
+                <div id="dropZone" class="drop-zone">
+                    <div class="drop-content">
+                        <svg class="drop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke-width="2" stroke-linecap="round"></path>
+                            <polyline points="17 8 12 3 7 8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15" stroke-width="2" stroke-linecap="round"></line>
+                        </svg>
+                        <p class="drop-text">Drop your image here or <span class="click-here">click to upload</span></p>
+                        <p class="drop-hint">Supported: PNG, JPG, JPEG, BMP, GIF, WEBP (Max 16MB)</p>
+                    </div>
+                    <input id="imageInput" type="file" accept="image/*" />
+                </div>
+            </div>
+
+            <!-- Image Preview -->
+            <div id="previewSection" class="preview-section hidden">
+                <div class="preview-container">
+                    <div class="scanning-overlay hidden" id="scanningOverlay"></div>
+                    <img id="imagePreview" alt="Image preview" />
+                </div>
+                <button id="analyzeBtn" class="analyze-btn">Analyze Scene</button>
+                <button id="changeImageBtn" class="secondary-btn">Change Image</button>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loadingState" class="loading-state hidden">
+                <div class="loading-spinner">
+                    <div class="spinner-ring"></div>
+                    <div class="spinner-ring"></div>
+                    <div class="spinner-ring"></div>
+                </div>
+                <p class="loading-text">Analyzing image...</p>
+            </div>
+
+            <!-- Error Message -->
+            <div id="errorMessage" class="error-message hidden">
+                <p id="errorText"></p>
+            </div>
+        </section>
+
+        <!-- Right Panel: Analysis Results -->
+        <section class="right-panel">
+            <div class="results-panel glass-card hidden" id="resultsPanel">
+                <div class="results-header">
+                    <h2>Analysis Results</h2>
+                    <div class="header-accent"></div>
+                </div>
+
+                <!-- Scene -->
+                <div class="result-section">
+                    <label>Scene</label>
+                    <div class="scene-display">
+                        <p id="sceneValue">—</p>
+                    </div>
+                </div>
+
+                <!-- Objects -->
+                <div class="result-section">
+                    <label>Objects Detected</label>
+                    <div class="objects-container" id="objectsContainer">
+                        <p class="placeholder">No objects detected</p>
+                    </div>
+                </div>
+
+                <!-- Activity -->
+                <div class="result-section">
+                    <label>Activity</label>
+                    <p id="activityValue" class="activity-text">—</p>
+                </div>
+
+                <!-- Risk Level -->
+                <div class="result-section">
+                    <label>Risk Level</label>
+                    <div class="risk-indicator" id="riskIndicator">
+                        <span id="riskValue">—</span>
+                    </div>
+                </div>
+
+                <!-- Event -->
+                <div class="result-section">
+                    <label>Event Prediction</label>
+                    <p id="eventValue" class="event-text">—</p>
+                </div>
+
+                <!-- Model Used -->
+                <div class="result-section">
+                    <label>Model Used</label>
+                    <p id="modelUsed" class="model-info-text">—</p>
+                </div>
+
+                <!-- Processed Image with Bounding Boxes -->
+                <div class="result-section full-width">
+                    <label>Detection Visualization</label>
+                    <div class="processed-image-container" id="processedImageContainer">
+                        <img id="processedImage" alt="Detected objects with bounding boxes" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Initial State -->
+            <div class="welcome-panel glass-card" id="welcomePanel">
+                <div class="welcome-content">
+                    <div class="welcome-icon">✨</div>
+                    <h2>Welcome to  Scene Analyzer</h2>
+                    <p>Upload an image to get started with real-time AI analysis</p>
+                    <div class="feature-list">
+                        <div class="feature-item">
+                            <span class="feature-icon">🎯</span>
+                            <span>Scene Recognition</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">🔍</span>
+                            <span>Object Detection</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">⚠️</span>
+                            <span>Risk Assessment</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">🤖</span>
+                            <span>AI Predictions</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
